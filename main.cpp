@@ -98,7 +98,7 @@ void BoundingBox::print_values()
     std::cout << std::endl;
 }
 
-int main(int argc, char **argv){
+int main(/* int argc, char **argv */){
 
     hello::say_hello();
 
@@ -160,7 +160,7 @@ int main(int argc, char **argv){
         filename = filename.substr(0, lastindex);
         filename.append(".txt");
 
-        fs.open(O_FILEPATH+filename, std::fstream::out);
+        fs.open(O_FILEPATH+filename, std::ios_base::app);
         if ( (fs.rdstate() & std::ifstream::failbit ) != 0 ){
             std::cerr << "Error opening " O_FILEPATH << std::endl;
             return 1;
