@@ -5,7 +5,8 @@
 #include <list>
 #include "hello.hpp"
 
-#define CSV_FILENAME "../../input_files/BBox_List_2017.csv" // PATH FROM DEBUG TO INPUT FILE
+#define I_FILENAME "../../input_files/BBox_List_2017.csv" // FILENAME WITH PATH FROM DEBUG TO INPUT FILE
+#define O_FILEPATH "../../output_files/" // PATH FROM DEBUG TO OUTPUT FILE
 
 class BoundingBox
 {
@@ -101,7 +102,7 @@ int main(int argc, char **argv){
 
     hello::say_hello();
 
-    std::fstream ifs;
+    std::fstream fs;
     std::string index_line;
     std::string line;
     size_t field_start = 0;
@@ -113,17 +114,18 @@ int main(int argc, char **argv){
     std::list<BoundingBox>::iterator it;
     std::array<std::string, 8> classes = { "Atelectasis", "Cardiomegaly", "Effusion", "Infiltrate", "Mass", "Nodule", "Pneumonia", "Pneumathorax" };
 
-    ifs.open(CSV_FILENAME, std::fstream::in);
-    if ( (ifs.rdstate() & std::ifstream::failbit ) != 0 ){
-        std::cerr << "Error opening " CSV_FILENAME << std::endl;
+    fs.open(I_FILENAME, std::fstream::in);
+    if ( (fs.rdstate() & std::ifstream::failbit ) != 0 ){
+        std::cerr << "Error opening " I_FILENAME << std::endl;
+        return 1;
     }
     else{
-        std::getline(ifs, index_line);
+        std::getline(fs, index_line);
         /* std::cout << "INDEX OF CSV => " << index_line << std::endl; */
-        while (ifs.good()){
-            std::getline(ifs, line);
+        while (fs.good()){
+            std::getline(fs, line);
             if(line.empty()) break;
-            std::cout << "Extracted Line [" << ++i << "] -> \"" << line << "\"" << std::endl;
+            /* std::cout << "Extracted Line [" << */ ++i /* << "] -> \"" << line << "\"" << std::endl */;
 
             while(line.find(',', field_start) !=  std::string::npos)
             {
@@ -147,11 +149,30 @@ int main(int argc, char **argv){
     }
 
     std::cout << "(class_id, x_centre,  y_centre,  width,  height)"  << std::endl;
-    for (it=my_bb_list.begin(); it != my_bb_list.end(); ++it)
-        (*it).print_values();
+    /* for (it=my_bb_list.begin(); it != my_bb_list.end(); ++it)
+        (*it).print_values(); */
+
+    fs.close();
+
+    for (it=my_bb_list.begin(); it != my_bb_list.end(); ++it){
+        std::string filename = (*it).get_bb_filename();
+        size_t lastindex = filename.find_last_of("."); 
+        filename = filename.substr(0, lastindex);
+        filename.append(".txt");
+
+        fs.open(O_FILEPATH+filename, std::fstream::out);
+        if ( (fs.rdstate() & std::ifstream::failbit ) != 0 ){
+            std::cerr << "Error opening " O_FILEPATH << std::endl;
+            return 1;
+        }
+        else{
+            fs << "(" << (*it).get_bb_class_id() << "," << (*it).get_bb_x_centre() << "," << (*it).get_bb_y_centre() << "," << (*it).get_bb_width() << "," << (*it).get_bb_height() << ")" << std::endl;
+        }
+        fs.close();
+    }
+
 
     std::cout << "End of Program." << std::endl;
-    ifs.close();
     return 0;
 } // end of main function code block
 
