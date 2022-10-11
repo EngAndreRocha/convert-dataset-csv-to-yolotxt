@@ -166,11 +166,10 @@ int main(/* int argc, char **argv */){
             return 1;
         }
         else{
-            fs << "(" << (*it).get_bb_class_id() << "," << (*it).get_bb_x_centre() << "," << (*it).get_bb_y_centre() << "," << (*it).get_bb_width() << "," << (*it).get_bb_height() << ")" << std::endl;
+            fs << (*it).get_bb_class_id() << " " << (*it).get_bb_x_centre() << " " << (*it).get_bb_y_centre() << " " << (*it).get_bb_width() << " " << (*it).get_bb_height() << std::endl;
         }
         fs.close();
     }
-
 
     std::cout << "End of Program." << std::endl;
     return 0;
